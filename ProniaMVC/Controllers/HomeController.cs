@@ -10,11 +10,11 @@ namespace ProniaMVC.Controllers
 
         private readonly AppDbContext _context;
 
-        public HomeController()
+        public HomeController(AppDbContext context)
         {
-            _context = new AppDbContext();
+            _context = context;
         }
-        public IActionResult Index()
+        public IActionResult Index() 
         {
             List<Slide> slides = _context.Slides
                 .OrderBy(s => s.Order)
