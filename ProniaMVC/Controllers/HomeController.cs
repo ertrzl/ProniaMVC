@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using ProniaMVC.DAL;
 using ProniaMVC.Models;
 using ProniaMVC.ViewModels;
@@ -21,12 +22,14 @@ namespace ProniaMVC.Controllers
                 .Take(2)
                 .ToList();
 
-
+            List<Product> products = _context.Products
+                .Include(p => p.ProductImages.Where(pi => pi.IsPrimary != null))
+                .ToList();
 
             HomeVM homeVM = new HomeVM()
             {
-                Slides = slides
-                
+                Slides = slides,
+                Products = products
             };
             return View(homeVM);
         }
