@@ -1900,7 +1900,7 @@
                             var secondaryImage = product.ProductImages.FirstOrDefault(pi => pi.IsPrimary != true)?.Image ?? primaryImage;
                             <div class="swiper-slide product-item">
                                 <div class="product-img">
-                                    <a href="product/details/@product.Id">
+                                    <a href="/product/details/@product.Id">
                                         <img class="primary-img"
                                              src="~/assets/images/website-images/@primaryImage"
                                              alt="Product Images" />
@@ -1949,7 +1949,7 @@
                                     </div>
                                 </div>
                                 <div class="product-content">
-                                    <a class="product-name" href="product/details/@product.Id">@product.Name</a>
+                                    <a class="product-name" href="/product/details/@product.Id">@product.Name</a>
                                     <div class="price-box pb-1">
                                         <span class="new-price">$@product.Price</span>
                                     </div>
