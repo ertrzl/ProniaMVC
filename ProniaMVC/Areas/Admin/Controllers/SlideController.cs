@@ -24,7 +24,19 @@ namespace ProniaMVC.Areas.Admin.Controllers
         public IActionResult Create()
         {
             return View();
-        }   
+        }
+
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id is null || id < 1) return BadRequest();
+
+            Slide? slide = await _context.Slides
+                .FirstOrDefaultAsync(s => s.Id == id);
+
+            if (slide is null) return NotFound();
+
+            return View(slide);
+        }
 
     }
 }
