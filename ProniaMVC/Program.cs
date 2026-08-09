@@ -16,6 +16,11 @@ var app = builder.Build();
 app.UseStaticFiles();
 app.MapControllerRoute(
     "default",
+    "{area:exists}/{controller=home}/{action=index}/{id?}"
+);
+
+app.MapControllerRoute(
+    "default",
     "{controller=home}/{action=index}/{id?}"
 
 
