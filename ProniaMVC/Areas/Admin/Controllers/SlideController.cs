@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using ProniaMVC.DAL;
 using ProniaMVC.Models;
+using ProniaMVC.Utilities.Enums;
+using ProniaMVC.Utilities.Extensions;
 
 namespace ProniaMVC.Areas.Admin.Controllers
 {
@@ -9,10 +11,14 @@ namespace ProniaMVC.Areas.Admin.Controllers
     public class SlideController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly IWebHostEnvironment _env;
 
-        public SlideController(AppDbContext appDbContext)
+        public SlideController(AppDbContext appDbContext, IWebHostEnvironment env)
         {
             _context = appDbContext;
+            _env = env;
+
+            _env.WebRootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
         }
         public async Task<IActionResult> Index()
         {
@@ -35,24 +41,38 @@ namespace ProniaMVC.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(Slide slide)
         {
+            //if (!ModelState.IsValid)
+            //{
+            //    return View(slide);
+            //}
 
-            if(!ModelState.IsValid)
+            if (!slide.Photo.IsValidSize(FileSize.MB, 2)) 
             {
+                ModelState.AddModelError(nameof(Slide.Photo), "Image size must be less than 2 MB.");
                 return View(slide);
             }
-
-           bool result = await _context.Slides.AnyAsync(s => s.Order == slide.Order);
+            if (!slide.Photo.IsValidType("image"))
+            {
+                ModelState.AddModelError(nameof(Slide.Photo), "Image format is not allowed.");
+                return View(slide);
+            }
+            bool result = await _context.Slides.AnyAsync(s => s.Order == slide.Order);
 
             if (result)
             {
                 ModelState.AddModelError(nameof(Slide.Order), "A slide with this order already exists.");
                 return View(slide);
-            }
+            }        
 
-            slide.CreatedAt = DateTime.Now; 
+
+            
+
+            slide.Image = await slide.Photo.CreateFileAsync(_env.WebRootPath, "assets", "images", "website-images");
+            slide.CreatedAt = DateTime.Now;
 
             _context.Slides.Add(slide);
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 
@@ -91,7 +111,7 @@ namespace ProniaMVC.Areas.Admin.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));        
 
-        } 
+        }
 
 
 
